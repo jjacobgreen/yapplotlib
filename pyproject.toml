@@ -3,7 +3,7 @@ requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "chatplotlib"
+name = "yapplotlib"
 version = "0.1.0"
 description = "A matplotlib plugin for rendering chat interfaces — ideal for academic AI papers."
 readme = "README.md"
@@ -18,4 +18,9 @@ dev = ["pytest", "pytest-mpl"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["chatplotlib*"]
+include = ["yapplotlib*"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+]

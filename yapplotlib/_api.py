@@ -1,7 +1,8 @@
 """
-Public API functions and the Axes.chat_thread method for chatplotlib.
+Public API functions and the Axes.chat_thread method for yapplotlib.
 """
 
+import matplotlib
 import matplotlib.pyplot as plt
 
 from ._styles import resolve_style
@@ -13,6 +14,14 @@ _LAYOUT_KEYS = (
     'show_avatars', 'avatar_size', 'line_spacing', 'bubble_spacing',
     'pad', 'font_size',
 )
+
+
+def _rc(key, fallback):
+    """Read a yapplotlib rcParam, falling back to *fallback* if not set."""
+    try:
+        return matplotlib.rcParams[f'yapplotlib.{key}']
+    except KeyError:
+        return fallback
 
 
 def _ax_chat_thread(
@@ -34,7 +43,7 @@ def _ax_chat_thread(
     """
     Render a chat thread on this Axes.
 
-    This method is injected onto ``matplotlib.axes.Axes`` when chatplotlib
+    This method is injected onto ``matplotlib.axes.Axes`` when yapplotlib
     is imported, so you can call it as ``ax.chat_thread(messages, ...)``.
 
     Parameters
@@ -51,35 +60,40 @@ def _ax_chat_thread(
     style : str or dict, optional
         Theme name (``'default'``, ``'paper'``, ``'dark'``, ``'minimal'``)
         or a partial style dict. Partial dicts are merged on top of
-        ``'default'``. Default: ``'default'``.
+        ``'default'``. Default: rcParam ``yapplotlib.style`` (initially
+        ``'default'``).
 
     bubble_width : float, optional
-        Maximum bubble width as a fraction of axes width. Default: 0.6.
+        Maximum bubble width as a fraction of axes width.
+        Default: rcParam ``yapplotlib.bubble_width`` (0.6).
 
     sender_align : dict, optional
         Maps role names to ``'left'``, ``'right'``, or ``'center'``.
         By default: user → right, assistant → left, system → center.
 
     show_names : bool, optional
-        Show sender name labels above each bubble. Default: True.
+        Show sender name labels above each bubble.
+        Default: rcParam ``yapplotlib.show_names`` (True).
 
     show_timestamps : bool, optional
         Show timestamp strings (requires ``'timestamp'`` key in messages).
-        Default: False.
+        Default: rcParam ``yapplotlib.show_timestamps`` (False).
 
     show_avatars : bool, optional
-        Show circular avatar badges with role initials. Default: False.
-        (Not yet implemented in Phase 1.)
+        Show circular avatar badges with role initials.
+        Default: rcParam ``yapplotlib.show_avatars`` (False).
 
     line_spacing : float, optional
-        Line spacing multiplier. Default: 1.4.
+        Line spacing multiplier.
+        Default: rcParam ``yapplotlib.line_spacing`` (1.4).
 
     bubble_spacing : float, optional
         Gap between consecutive bubbles, expressed in line-heights.
-        Default: 0.6.
+        Default: rcParam ``yapplotlib.bubble_spacing`` (0.6).
 
     pad : float, optional
-        Left/right edge padding as a fraction of axes width. Default: 0.05.
+        Left/right edge padding as a fraction of axes width.
+        Default: rcParam ``yapplotlib.pad`` (0.05).
 
     font_size : float, optional
         Font size in points. ``None`` inherits from the active style.
@@ -89,21 +103,24 @@ def _ax_chat_thread(
     ChatThread
         The thread object, which exposes ``redraw()`` and ``disconnect()``.
     """
+    # Apply rcParam defaults for any argument left as None
+    if style is None:
+        style = _rc('style', 'default')
+
     resolved_style = resolve_style(style)
 
-    # Collect non-None layout kwargs into one dict
     layout_params = {
         k: v for k, v in {
-            'bubble_width': bubble_width,
-            'sender_align': sender_align,
-            'show_names': show_names,
-            'show_timestamps': show_timestamps,
-            'show_avatars': show_avatars,
-            'avatar_size': avatar_size,
-            'line_spacing': line_spacing,
-            'bubble_spacing': bubble_spacing,
-            'pad': pad,
-            'font_size': font_size,
+            'bubble_width':    bubble_width    if bubble_width    is not None else _rc('bubble_width',    0.6),
+            'sender_align':    sender_align,
+            'show_names':      show_names      if show_names      is not None else _rc('show_names',      True),
+            'show_timestamps': show_timestamps if show_timestamps is not None else _rc('show_timestamps', False),
+            'show_avatars':    show_avatars    if show_avatars    is not None else _rc('show_avatars',    False),
+            'avatar_size':     avatar_size,
+            'line_spacing':    line_spacing    if line_spacing    is not None else _rc('line_spacing',    1.4),
+            'bubble_spacing':  bubble_spacing  if bubble_spacing  is not None else _rc('bubble_spacing',  0.6),
+            'pad':             pad             if pad             is not None else _rc('pad',             0.05),
+            'font_size':       font_size       if font_size       is not None else _rc('font_size',       None),
         }.items()
         if v is not None
     }

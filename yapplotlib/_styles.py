@@ -1,5 +1,5 @@
 """
-Theme definitions and style resolution for chatplotlib.
+Theme definitions and style resolution for yapplotlib.
 """
 
 THEMES = {
@@ -26,6 +26,13 @@ THEMES = {
         'timestamp_alpha': 0.50,
         # Bubble geometry
         'bubble_lw': 0.8,
+        # Code blocks
+        'code_facecolor': '#C8C8C8',
+        'code_edgecolor': 'none',
+        # Avatars (background circle colour per role)
+        'user_avatar_color': '#128C7E',
+        'assistant_avatar_color': '#888888',
+        'other_avatar_color': '#999999',
         # Backgrounds
         'figure_facecolor': '#E5DDD5',
         'axes_facecolor': '#E5DDD5',
@@ -51,6 +58,11 @@ THEMES = {
         'name_alpha': 0.80,
         'timestamp_alpha': 0.65,
         'bubble_lw': 0.6,
+        'code_facecolor': '#E4E4E4',
+        'code_edgecolor': '#BBBBBB',
+        'user_avatar_color': '#666666',
+        'assistant_avatar_color': '#AAAAAA',
+        'other_avatar_color': '#999999',
         'figure_facecolor': '#FFFFFF',
         'axes_facecolor': '#FFFFFF',
     },
@@ -74,6 +86,11 @@ THEMES = {
         'name_alpha': 0.70,
         'timestamp_alpha': 0.50,
         'bubble_lw': 0.5,
+        'code_facecolor': '#0D1117',
+        'code_edgecolor': '#30363D',
+        'user_avatar_color': '#00A884',
+        'assistant_avatar_color': '#2A3942',
+        'other_avatar_color': '#374248',
         'figure_facecolor': '#0B141A',
         'axes_facecolor': '#0B141A',
     },
@@ -97,6 +114,11 @@ THEMES = {
         'name_alpha': 0.70,
         'timestamp_alpha': 0.50,
         'bubble_lw': 1.0,
+        'code_facecolor': '#F0F0F0',
+        'code_edgecolor': '#CCCCCC',
+        'user_avatar_color': '#555555',
+        'assistant_avatar_color': '#999999',
+        'other_avatar_color': '#AAAAAA',
         'figure_facecolor': '#FFFFFF',
         'axes_facecolor': '#FFFFFF',
     },

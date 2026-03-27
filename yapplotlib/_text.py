@@ -1,5 +1,5 @@
 """
-Text wrapping and measurement utilities for chatplotlib.
+Text wrapping and measurement utilities for yapplotlib.
 
 Provides both a fast character-count fallback and pixel-accurate wrapping
 via the matplotlib renderer's font metrics.
@@ -104,3 +104,53 @@ def estimate_chars_per_line(width_pts, font_size, font_family='sans-serif'):
     else:
         char_factor = 0.55
     return max(8, int(width_pts / (font_size * char_factor)))
+
+
+def split_content_segments(content):
+    """
+    Split *content* into alternating text and code segments.
+
+    Recognises triple-backtick fenced code blocks (``` … ```) with an
+    optional language tag (e.g. ```python).  Returns a list of
+    ``(kind, text)`` tuples where *kind* is ``'text'`` or ``'code'``.
+
+    A message with no code blocks returns ``[('text', content)]``.
+    Adjacent text segments are merged.
+
+    Parameters
+    ----------
+    content : str
+
+    Returns
+    -------
+    list[tuple[str, str]]
+
+    Examples
+    --------
+    >>> split_content_segments("Hello\\n```python\\nx=1\\n```\\nDone")
+    [('text', 'Hello'), ('code', 'x=1'), ('text', 'Done')]
+    """
+    import re
+
+    if '```' not in content:
+        return [('text', content)]
+
+    # Split on fenced blocks; keep the delimiter in the result via a capture group
+    parts = re.split(r'(```[^\n]*\n?.*?```)', content, flags=re.DOTALL)
+    segments = []
+    for part in parts:
+        if not part:
+            continue
+        if part.startswith('```'):
+            # Strip opening fence (with optional language tag) and closing fence
+            inner = re.sub(r'^```[^\n]*\n?', '', part)
+            inner = re.sub(r'\n?```$', '', inner)
+            segments.append(('code', inner))
+        else:
+            # Collapse adjacent text segments (should not happen, but be safe)
+            if segments and segments[-1][0] == 'text':
+                segments[-1] = ('text', segments[-1][1] + part)
+            else:
+                segments.append(('text', part))
+
+    return segments or [('text', content)]
