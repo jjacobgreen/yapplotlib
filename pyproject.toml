@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chatplotlib"
+version = "0.1.0"
+description = "A matplotlib plugin for rendering chat interfaces — ideal for academic AI papers."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+dependencies = [
+    "matplotlib>=3.5",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-mpl"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["chatplotlib*"]
