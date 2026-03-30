@@ -119,9 +119,9 @@ fig, ax = yapplotlib.chatplot(messages, style=my_style)
 messages[2]['style'] = {'user_facecolor': '#FFD700'}
 ```
 
-## ChatThread object
+## ChatPlot object
 
-`ax.chatplot()` returns a `ChatThread` object:
+`ax.chatplot()` returns a `ChatPlot` object:
 
 ```python
 thread = ax.chatplot(messages)

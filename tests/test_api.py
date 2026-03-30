@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import pytest
 
 import yapplotlib
-from yapplotlib._artists import ChatThread
+from yapplotlib._artists import ChatPlot
 
 # ── Fixtures ─────────────────────────────────────────────────────────────
 
@@ -23,7 +23,7 @@ def msgs():
 # ── chatplot() ─────────────────────────────────────────────────────────
 
 
-class TestChatThread:
+class TestChatPlot:
     def test_returns_fig_and_ax(self, msgs):
         fig, ax = yapplotlib.chatplot(msgs)
         assert isinstance(fig, matplotlib.figure.Figure)
@@ -72,22 +72,22 @@ class TestChatThread:
 # ── ax.chatplot() ─────────────────────────────────────────────────────
 
 
-class TestAxChatThread:
+class TestAxChatPlot:
     def test_returns_chatplot_object(self, msgs):
         fig, ax = plt.subplots()
         thread = ax.chatplot(msgs)
-        assert isinstance(thread, ChatThread)
+        assert isinstance(thread, ChatPlot)
 
     def test_embedded_in_subplot(self, msgs):
         fig, axes = plt.subplots(1, 2, figsize=(10, 5))
         thread = axes[0].chatplot(msgs, style="paper")
         axes[1].plot([1, 2, 3], [1, 4, 2])
-        assert isinstance(thread, ChatThread)
+        assert isinstance(thread, ChatPlot)
 
     def test_show_names_false(self, msgs):
         fig, ax = plt.subplots()
         thread = ax.chatplot(msgs, show_names=False)
-        assert isinstance(thread, ChatThread)
+        assert isinstance(thread, ChatPlot)
 
     def test_show_timestamps(self):
         msgs = [
@@ -96,18 +96,18 @@ class TestAxChatThread:
         ]
         fig, ax = plt.subplots()
         thread = ax.chatplot(msgs, show_timestamps=True)
-        assert isinstance(thread, ChatThread)
+        assert isinstance(thread, ChatPlot)
 
     def test_show_avatars(self, msgs):
         fig, ax = plt.subplots()
         thread = ax.chatplot(msgs, show_avatars=True)
-        assert isinstance(thread, ChatThread)
+        assert isinstance(thread, ChatPlot)
 
     def test_per_message_style(self, msgs):
         msgs[0] = {**msgs[0], "style": {"user_facecolor": "#FFD700"}}
         fig, ax = plt.subplots()
         thread = ax.chatplot(msgs)
-        assert isinstance(thread, ChatThread)
+        assert isinstance(thread, ChatPlot)
 
     def test_sender_align_override(self, msgs):
         fig, ax = plt.subplots()
@@ -115,18 +115,18 @@ class TestAxChatThread:
             msgs,
             sender_align={"user": "left", "assistant": "right"},
         )
-        assert isinstance(thread, ChatThread)
+        assert isinstance(thread, ChatPlot)
 
     def test_bubble_width(self, msgs):
         fig, ax = plt.subplots()
         thread = ax.chatplot(msgs, bubble_width=0.8)
-        assert isinstance(thread, ChatThread)
+        assert isinstance(thread, ChatPlot)
 
 
-# ── ChatThread introspection ──────────────────────────────────────────────
+# ── ChatPlot introspection ──────────────────────────────────────────────
 
 
-class TestChatThreadIntrospection:
+class TestChatPlotIntrospection:
     def test_get_children_returns_list(self, msgs):
         fig, ax = plt.subplots()
         thread = ax.chatplot(msgs)
@@ -167,6 +167,6 @@ class TestRcParams:
             fig, ax = plt.subplots()
             # Should use 'paper' style from rcParams (no explicit style arg)
             thread = ax.chatplot(msgs)
-            assert isinstance(thread, ChatThread)
+            assert isinstance(thread, ChatPlot)
         finally:
             matplotlib.rcParams["yapplotlib.style"] = original

@@ -5,7 +5,7 @@ Public API functions and the Axes.chatplot method for yapplotlib.
 import matplotlib
 import matplotlib.pyplot as plt
 
-from ._artists import ChatThread
+from ._artists import ChatPlot
 from ._styles import resolve_style
 
 # Keys that can be passed from chatplot() kwargs to ax.chatplot()
@@ -107,7 +107,7 @@ def _ax_chatplot(
 
     Returns
     -------
-    ChatThread
+    ChatPlot
         The thread object, which exposes ``redraw()`` and ``disconnect()``.
     """
     # Apply rcParam defaults for any argument left as None
@@ -144,7 +144,7 @@ def _ax_chatplot(
     fig.patch.set_facecolor(resolved_style.get("figure_facecolor", "white"))
     self.set_facecolor(resolved_style.get("axes_facecolor", "white"))
 
-    return ChatThread(messages, resolved_style, self, layout_params)
+    return ChatPlot(messages, resolved_style, self, layout_params)
 
 
 def chatplot(
@@ -204,7 +204,7 @@ def _autosize_figure(fig, thread):
     """
     Resize the figure height so it exactly fits the laid-out content.
 
-    Reads the current ylim (which ChatThread sets to the content extent),
+    Reads the current ylim (which ChatPlot sets to the content extent),
     converts to inches at the figure's DPI, then sets the new figure height
     and re-runs the layout at the correct size.
     """

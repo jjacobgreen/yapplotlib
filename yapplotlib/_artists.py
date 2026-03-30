@@ -39,7 +39,7 @@ def _initials(name):
     return "".join(w[0].upper() for w in words if w)[:2] or "?"
 
 
-class ChatThread:
+class ChatPlot:
     """
     Renders a list of chat messages onto a matplotlib Axes.
 
@@ -88,7 +88,7 @@ class ChatThread:
 
     def get_children(self):
         """
-        Return all matplotlib artists managed by this ChatThread.
+        Return all matplotlib artists managed by this ChatPlot.
 
         Useful for artist introspection, hit-testing, and save/restore
         workflows. The list is rebuilt on every layout pass, so call this

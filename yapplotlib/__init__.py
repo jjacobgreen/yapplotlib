@@ -29,6 +29,7 @@ import matplotlib.style
 from matplotlib.axes import Axes
 
 from ._api import _ax_chatplot, chatplot
+from ._artists import ChatPlot
 from ._styles import THEMES, resolve_style
 
 # ── Register custom rcParams ──────────────────────────────────────────────
@@ -91,6 +92,7 @@ Axes.chatplot = _ax_chatplot  # type: ignore[attr-defined]
 themes = {name: dict(s) for name, s in THEMES.items()}
 
 __all__ = [
+    "ChatPlot",
     "chatplot",
     "themes",
     "resolve_style",
