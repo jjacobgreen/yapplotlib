@@ -1,6 +1,6 @@
 # yapplotlib
 
-A matplotlib plugin for rendering chat interfaces — ideal for academic AI papers.
+A matplotlib plugin for rendering chat interfaces.
 
 ## Installation
 
@@ -147,3 +147,5 @@ uv run python smoke_test.py  # render all styles to smoke_output/
   messages (`role: 'tool'` or `role: 'tool_result'`), showing the tool name,
   inputs, and output in a monospace code-block style distinct from regular
   assistant prose.
+
+- **Plotly support**

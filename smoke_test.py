@@ -45,24 +45,24 @@ MESSAGES = [
 
 # ── Test 1: standalone paper style ───────────────────────────────────────
 print("Test 1: standalone paper style...")
-save(yapplotlib.chat_thread(MESSAGES, style='paper')[0], 'paper.png')
+save(yapplotlib.chatplot(MESSAGES, style='paper')[0], 'paper.png')
 
 # ── Test 2: standalone default style ─────────────────────────────────────
 print("Test 2: standalone default style...")
-save(yapplotlib.chat_thread(MESSAGES, style='default')[0], 'default.png')
+save(yapplotlib.chatplot(MESSAGES, style='default')[0], 'default.png')
 
 # ── Test 3: dark style ────────────────────────────────────────────────────
 print("Test 3: dark style...")
-save(yapplotlib.chat_thread(MESSAGES, style='dark')[0], 'dark.png')
+save(yapplotlib.chatplot(MESSAGES, style='dark')[0], 'dark.png')
 
 # ── Test 4: minimal style ─────────────────────────────────────────────────
 print("Test 4: minimal style...")
-save(yapplotlib.chat_thread(MESSAGES, style='minimal')[0], 'minimal.png')
+save(yapplotlib.chatplot(MESSAGES, style='minimal')[0], 'minimal.png')
 
 # ── Test 5: embedded in subplot grid ─────────────────────────────────────
 print("Test 5: embedded in subplot grid...")
 fig, axes = plt.subplots(1, 2, figsize=(11, 7))
-axes[0].chat_thread(MESSAGES[:5], style='paper', show_names=True)
+axes[0].chatplot(MESSAGES[:5], style='paper', show_names=True)
 axes[1].plot([1, 2, 3, 4], [1, 4, 2, 3], marker='o')
 axes[1].set_title('Model accuracy')
 plt.tight_layout()
@@ -76,17 +76,17 @@ ts_msgs = [
     {'role': 'user',      'content': 'How are you?',  'timestamp': '10:01 AM'},
     {'role': 'assistant', 'content': 'Doing well, thanks for asking!', 'timestamp': '10:01 AM'},
 ]
-save(yapplotlib.chat_thread(ts_msgs, style='default', show_names=False, show_timestamps=True)[0], 'timestamps.png')
+save(yapplotlib.chatplot(ts_msgs, style='default', show_names=False, show_timestamps=True)[0], 'timestamps.png')
 
 # ── Test 7: per-message style override ────────────────────────────────────
 print("Test 7: per-message style override...")
 override_msgs = list(MESSAGES)
 override_msgs[1] = {**override_msgs[1], 'style': {'user_facecolor': '#FFD700', 'user_edgecolor': '#FFA500'}}
-save(yapplotlib.chat_thread(override_msgs, style='default')[0], 'override.png')
+save(yapplotlib.chatplot(override_msgs, style='default')[0], 'override.png')
 
 # ── Test 8: avatars ───────────────────────────────────────────────────────
 print("Test 8: avatars...")
-save(yapplotlib.chat_thread(MESSAGES[:5], style='default', show_avatars=True)[0], 'avatars.png')
+save(yapplotlib.chatplot(MESSAGES[:5], style='default', show_avatars=True)[0], 'avatars.png')
 
 # ── Test 9: code blocks ───────────────────────────────────────────────────
 print("Test 9: code blocks...")
@@ -109,19 +109,19 @@ code_msgs = [
         'content': "`list.reverse()` is slightly faster as it avoids allocating a new list. For large lists, prefer it when you don't need the original.",
     },
 ]
-save(yapplotlib.chat_thread(code_msgs, style='default')[0], 'code.png')
+save(yapplotlib.chatplot(code_msgs, style='default')[0], 'code.png')
 
 # ── Test 10: code blocks + paper style ───────────────────────────────────
 print("Test 10: code blocks + paper style...")
-save(yapplotlib.chat_thread(code_msgs, style='paper')[0], 'code_paper.png')
+save(yapplotlib.chatplot(code_msgs, style='paper')[0], 'code_paper.png')
 
 # ── Test 11: avatars + dark style ────────────────────────────────────────
 print("Test 11: avatars + dark style...")
-save(yapplotlib.chat_thread(MESSAGES[:5], style='dark', show_avatars=True, show_names=False)[0], 'avatars_dark.png')
+save(yapplotlib.chatplot(MESSAGES[:5], style='dark', show_avatars=True, show_names=False)[0], 'avatars_dark.png')
 
 # ── Test 12: mplstyle registration ───────────────────────────────────────
 print("Test 12: plt.style.use('yapplotlib.paper')...")
 with plt.style.context('yapplotlib.paper'):
-    save(yapplotlib.chat_thread(MESSAGES[:3], style='paper')[0], 'mplstyle.png')
+    save(yapplotlib.chatplot(MESSAGES[:3], style='paper')[0], 'mplstyle.png')
 
 print(f"\nAll tests passed! Output in smoke_output/")

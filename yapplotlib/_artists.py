@@ -17,7 +17,7 @@ has changed the axes width and schedules a relayout via draw_idle().
 import matplotlib.patches as mpatches
 
 from ._styles import resolve_role_style, get_align
-from ._text import wrap_text, wrap_text_accurate, estimate_chars_per_line, split_content_segments
+from ._text import wrap_text, wrap_text_accurate, estimate_chars_per_line
 
 _LAYOUT_DEFAULTS = {
     'bubble_width': 0.6,
@@ -169,81 +169,6 @@ class ChatThread:
                 text, estimate_chars_per_line(width_pts, font_size, font_family)
             )
 
-    def _measure_segments(self, segments, col_w, line_h, code_line_h,
-                          code_inner_pad, code_gap, wrap_fn):
-        """Return total content height in pts (excludes bubble top/bottom padding)."""
-        total = 0.0
-        for i, (kind, text) in enumerate(segments):
-            if kind == 'code':
-                n = max(1, len(text.split('\n')))
-                total += 2 * code_inner_pad + n * code_line_h
-                if i > 0:
-                    total += code_gap
-                if i < len(segments) - 1:
-                    total += code_gap
-            else:
-                stripped = text.strip()
-                lines = wrap_fn(stripped, col_w) if stripped else []
-                total += len(lines) * line_h
-        return total
-
-    def _render_segments(self, segments, ax, bx0, bw, text_x, y_top, col_w,
-                         font_size, font_family, text_color,
-                         code_facecolor, code_edgecolor, code_lw,
-                         line_h, code_line_h, code_inner_pad, code_gap,
-                         internal_pad_x, wrap_fn):
-        """Draw all content segments; returns height consumed."""
-        y = y_top
-        for i, (kind, text) in enumerate(segments):
-            if kind == 'code':
-                if i > 0:
-                    y -= code_gap
-                code_lines = text.split('\n') or ['']
-                n = len(code_lines)
-                block_h = 2 * code_inner_pad + n * code_line_h
-                rx0 = bx0 + internal_pad_x * 0.4
-                rw = bw - internal_pad_x * 0.8
-                bg = mpatches.FancyBboxPatch(
-                    (rx0, y - block_h), rw, block_h,
-                    boxstyle=f'round,pad=0,rounding_size={font_size * 0.15}',
-                    facecolor=code_facecolor,
-                    edgecolor='none' if code_edgecolor == 'none' else code_edgecolor,
-                    linewidth=0 if code_edgecolor == 'none' else code_lw,
-                    clip_on=False, zorder=2.5,
-                )
-                ax.add_patch(bg)
-                self._add(bg)
-                cy = y - code_inner_pad
-                for line in code_lines:
-                    t = ax.text(
-                        rx0 + font_size * 0.4, cy, line,
-                        fontsize=font_size * 0.88,
-                        fontfamily='monospace',
-                        color=text_color,
-                        ha='left', va='top',
-                        clip_on=False, zorder=3,
-                    )
-                    self._add(t)
-                    cy -= code_line_h
-                y -= block_h
-                if i < len(segments) - 1:
-                    y -= code_gap
-            else:
-                stripped = text.strip()
-                lines = wrap_fn(stripped, col_w) if stripped else []
-                for line in lines:
-                    t = ax.text(
-                        text_x, y, line,
-                        fontsize=font_size,
-                        fontfamily=font_family,
-                        color=text_color,
-                        ha='left', va='top',
-                        clip_on=False, zorder=3,
-                    )
-                    self._add(t)
-                    y -= line_h
-        return y_top - y
-
     # ── Main layout ───────────────────────────────────────────────────
 
     def _do_layout(self):
@@ -263,22 +188,22 @@ class ChatThread:
         font_family  = s.get('font_family', 'sans-serif')
         line_spacing = float(p.get('line_spacing', 1.4))
 
-        line_h        = font_size * line_spacing
-        name_font     = float(s.get('name_font_size',      font_size * 0.80))
-        ts_font       = float(s.get('timestamp_font_size', font_size * 0.70))
-        name_line_h   = name_font * 1.35
-        ts_line_h     = ts_font   * 1.30
-        code_font     = font_size * 0.88
-        code_line_h   = code_font * line_spacing
-        code_inner_pad = font_size * 0.35   # top/bottom padding inside code bg
-        code_gap       = font_size * 0.30   # gap above/below a code block within prose
+        line_h      = font_size * line_spacing
+        name_font   = float(s.get('name_font_size',      font_size * 0.80))
+        ts_font     = float(s.get('timestamp_font_size', font_size * 0.70))
+        name_line_h = name_font * 1.35
+        ts_line_h   = ts_font   * 1.30
 
         # ── Layout geometry ───────────────────────────────────────────
         bubble_spacing_pts = line_h * float(p.get('bubble_spacing', 0.6))
         pad_x              = ax_width_pts * float(p.get('pad', 0.05))
         bubble_width_pts   = ax_width_pts * float(p.get('bubble_width', 0.6))
-        internal_pad_x     = font_size * 0.75
-        internal_pad_y     = font_size * 0.45
+        internal_pad_x     = font_size * 0.60
+        # Top and left/right padding are equal. Bottom is reduced to compensate
+        # for the trailing line-spacing gap after the last text line, keeping
+        # all four inner margins visually equal.
+        internal_pad_y_top = font_size * 0.55
+        internal_pad_y_bot = font_size * 0.15
         round_size         = font_size * 0.40
 
         show_names      = bool(p.get('show_names', True))
@@ -337,9 +262,18 @@ class ChatThread:
             text_x   = bx0 + internal_pad_x
 
             # ── Name label ────────────────────────────────────────────
-            if show_names and align != 'center':
-                name_x  = bx1 if align == 'right' else bx0
-                name_ha = 'right' if align == 'right' else 'left'
+            # Always shown for center (system) messages — the label is their
+            # only visual identifier since they have no avatar or tail.
+            if show_names or align == 'center':
+                if align == 'center':
+                    name_x  = ax_width_pts / 2
+                    name_ha = 'center'
+                elif align == 'right':
+                    name_x  = bx1
+                    name_ha = 'right'
+                else:
+                    name_x  = bx0
+                    name_ha = 'left'
                 self._add(ax.text(
                     name_x, y_cursor, name_str,
                     fontsize=name_font, fontfamily=font_family,
@@ -350,13 +284,10 @@ class ChatThread:
                 ))
                 y_cursor -= name_line_h
 
-            # ── Measure content height ─────────────────────────────────
-            segments   = split_content_segments(content)
-            content_h  = self._measure_segments(
-                segments, col_w, line_h, code_line_h,
-                code_inner_pad, code_gap, wrap_fn
-            )
-            bubble_h = content_h + 2 * internal_pad_y
+            # ── Measure and position bubble ───────────────────────────
+            lines     = wrap_fn(content.strip(), col_w) if content.strip() else []
+            content_h = len(lines) * line_h
+            bubble_h  = content_h + internal_pad_y_top + internal_pad_y_bot
 
             bubble_top = y_cursor
             bubble_bot = y_cursor - bubble_h
@@ -372,30 +303,6 @@ class ChatThread:
                 linewidth=lw,
                 clip_on=False, zorder=2,
             )))
-
-            # ── Tail ──────────────────────────────────────────────────
-            if align != 'center':
-                tail_h = font_size * 0.55
-                tail_w = font_size * 0.45
-                anchor_y = bubble_bot + round_size + tail_h * 0.15
-                if align == 'right':
-                    verts = [
-                        (bx1 - round_size, anchor_y + tail_h * 0.55),
-                        (bx1 - round_size, anchor_y - tail_h * 0.15),
-                        (bx1 + tail_w,     anchor_y + tail_h * 0.20),
-                    ]
-                else:
-                    verts = [
-                        (bx0 + round_size, anchor_y + tail_h * 0.55),
-                        (bx0 + round_size, anchor_y - tail_h * 0.15),
-                        (bx0 - tail_w,     anchor_y + tail_h * 0.20),
-                    ]
-                self._add(ax.add_patch(mpatches.Polygon(
-                    verts, closed=True,
-                    facecolor=role_s['facecolor'],
-                    edgecolor='none',
-                    clip_on=False, zorder=1,
-                )))
 
             # ── Avatar ────────────────────────────────────────────────
             if show_avatars and align != 'center':
@@ -426,16 +333,17 @@ class ChatThread:
                 ))
 
             # ── Content ───────────────────────────────────────────────
-            self._render_segments(
-                segments, ax, bx0, bw, text_x,
-                bubble_top - internal_pad_y,
-                col_w, font_size, font_family, role_s['textcolor'],
-                s.get('code_facecolor', '#E0E0E0'),
-                s.get('code_edgecolor', 'none'),
-                s.get('bubble_lw', 0.8),
-                line_h, code_line_h, code_inner_pad, code_gap,
-                internal_pad_x, wrap_fn,
-            )
+            y = bubble_top - internal_pad_y_top
+            for line in lines:
+                self._add(ax.text(
+                    text_x, y, line,
+                    fontsize=font_size,
+                    fontfamily=font_family,
+                    color=role_s['textcolor'],
+                    ha='left', va='top',
+                    clip_on=False, zorder=3,
+                ))
+                y -= line_h
 
             y_cursor = bubble_bot
 
@@ -457,7 +365,7 @@ class ChatThread:
             y_cursor -= bubble_spacing_pts
 
         # ── Finalise axes ─────────────────────────────────────────────
-        top_pad = internal_pad_y * 2.0
+        top_pad = internal_pad_y_top * 2.0
         bot_pad = bubble_spacing_pts * 1.5
         ax.set_ylim(y_cursor - bot_pad, top_pad)
         ax.set_axis_off()

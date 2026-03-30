@@ -6,15 +6,61 @@ import pytest
 from yapplotlib._styles import resolve_style, resolve_role_style, get_align, THEMES
 
 
-class TestResolveStyle:
-    def test_none_returns_default(self):
-        result = resolve_style(None)
-        assert result == dict(THEMES['default'])
+_REQUIRED_KEYS = {
+    'user_facecolor', 'user_edgecolor', 'user_textcolor',
+    'assistant_facecolor', 'assistant_edgecolor', 'assistant_textcolor',
+    'system_facecolor', 'system_edgecolor', 'system_textcolor',
+    'figure_facecolor', 'axes_facecolor', 'font_family', 'font_size',
+}
 
-    def test_string_theme_name(self):
-        for name in ('default', 'paper', 'dark', 'minimal'):
+
+class TestResolveStyle:
+    def test_none_returns_complete_style(self):
+        result = resolve_style(None)
+        assert _REQUIRED_KEYS.issubset(result)
+
+    def test_default_returns_complete_style(self):
+        result = resolve_style('default')
+        assert _REQUIRED_KEYS.issubset(result)
+
+    def test_explicit_themes_unchanged(self):
+        for name in ('paper', 'dark', 'minimal'):
             result = resolve_style(name)
             assert result == dict(THEMES[name])
+
+    def test_default_inherits_mpl_backgrounds(self):
+        import matplotlib
+        original_fc = matplotlib.rcParams['figure.facecolor']
+        original_ac = matplotlib.rcParams['axes.facecolor']
+        try:
+            matplotlib.rcParams['figure.facecolor'] = '#AABBCC'
+            matplotlib.rcParams['axes.facecolor'] = '#AABBCC'
+            result = resolve_style('default')
+            assert result['figure_facecolor'] == '#AABBCC'
+            assert result['axes_facecolor'] == '#AABBCC'
+        finally:
+            matplotlib.rcParams['figure.facecolor'] = original_fc
+            matplotlib.rcParams['axes.facecolor'] = original_ac
+
+    def test_default_dark_background_uses_dark_palette(self):
+        import matplotlib
+        original = matplotlib.rcParams['axes.facecolor']
+        try:
+            matplotlib.rcParams['axes.facecolor'] = '#0B141A'
+            result = resolve_style('default')
+            assert result['user_facecolor'] == THEMES['dark']['user_facecolor']
+        finally:
+            matplotlib.rcParams['axes.facecolor'] = original
+
+    def test_default_light_background_uses_light_palette(self):
+        import matplotlib
+        original = matplotlib.rcParams['axes.facecolor']
+        try:
+            matplotlib.rcParams['axes.facecolor'] = 'white'
+            result = resolve_style('default')
+            assert result['user_facecolor'] == THEMES['default']['user_facecolor']
+        finally:
+            matplotlib.rcParams['axes.facecolor'] = original
 
     def test_unknown_string_raises(self):
         with pytest.raises(ValueError, match="Unknown style"):
@@ -23,8 +69,7 @@ class TestResolveStyle:
     def test_dict_merges_over_default(self):
         result = resolve_style({'user_facecolor': '#FF0000'})
         assert result['user_facecolor'] == '#FF0000'
-        # Other keys still come from default
-        assert result['font_family'] == THEMES['default']['font_family']
+        assert isinstance(result['font_family'], str)
 
     def test_dict_with_base(self):
         result = resolve_style({'_base': 'paper', 'font_size': 12.0})

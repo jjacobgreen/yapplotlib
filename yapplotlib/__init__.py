@@ -8,16 +8,16 @@ Quick start
 ...     {'role': 'user',      'content': 'What is 2 + 2?'},
 ...     {'role': 'assistant', 'content': 'It is 4.'},
 ... ]
->>> fig, ax = yapplotlib.chat_thread(messages, style='paper')
+>>> fig, ax = yapplotlib.chatplot(messages, style='paper')
 >>> fig.savefig('chat.pdf', bbox_inches='tight')
 
 Or embedded in an existing figure::
 
     import matplotlib.pyplot as plt
-    import yapplotlib          # import injects Axes.chat_thread
+    import yapplotlib          # import injects Axes.chatplot
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))
-    axes[0].chat_thread(messages, style='paper')
+    axes[0].chatplot(messages, style='paper')
     axes[1].plot([1, 2, 3], [4, 5, 6])
     plt.tight_layout()
 """
@@ -28,20 +28,16 @@ import matplotlib
 import matplotlib.style
 from matplotlib.axes import Axes
 
-from ._api import _ax_chat_thread, chat_thread
+from ._api import _ax_chatplot, chatplot
 from ._styles import THEMES, resolve_style
-
-# ── Register bundled .mplstyle files ─────────────────────────────────────
-# Enables:  plt.style.use('yapplotlib.paper')
-_styles_dir = Path(__file__).parent / 'styles'
-if _styles_dir not in matplotlib.style.core.USER_LIBRARY_PATHS:
-    matplotlib.style.core.USER_LIBRARY_PATHS.append(_styles_dir)
-matplotlib.style.reload_library()
 
 # ── Register custom rcParams ──────────────────────────────────────────────
 # Inject yapplotlib.* keys into matplotlib.rcParams using dict.__setitem__
 # to bypass matplotlib's key-validation (standard third-party extension
 # pattern for keys not in matplotlib's built-in schema).
+#
+# IMPORTANT: this must happen before reload_library() below so that the
+# yapplotlib.* keys are known to the validator when mplstyle files are parsed.
 #
 # Users can then set defaults via:
 #   import matplotlib
@@ -73,10 +69,19 @@ try:
 except Exception:
     pass
 
-# ── Inject Axes.chat_thread ───────────────────────────────────────────────
+# ── Register bundled .mplstyle files ─────────────────────────────────────
+# Enables:  plt.style.use('yapplotlib.paper')
+# Must come after rcParams registration so yapplotlib.* keys are valid when
+# the style files are parsed by reload_library().
+_styles_dir = Path(__file__).parent / 'styles'
+if _styles_dir not in matplotlib.style.core.USER_LIBRARY_PATHS:
+    matplotlib.style.core.USER_LIBRARY_PATHS.append(_styles_dir)
+matplotlib.style.reload_library()
+
+# ── Inject Axes.chatplot ──────────────────────────────────────────────────
 # This is the standard matplotlib extension pattern used by mplcursors,
 # matplotlib-scalebar, and others.
-Axes.chat_thread = _ax_chat_thread
+Axes.chatplot = _ax_chatplot
 
 # ── Public API ────────────────────────────────────────────────────────────
 #: Read-only copies of the built-in theme dicts, available for introspection
@@ -86,7 +91,7 @@ Axes.chat_thread = _ax_chat_thread
 themes = {name: dict(s) for name, s in THEMES.items()}
 
 __all__ = [
-    'chat_thread',
+    'chatplot',
     'themes',
     'resolve_style',
 ]

@@ -1,5 +1,5 @@
 """
-Public API functions and the Axes.chat_thread method for yapplotlib.
+Public API functions and the Axes.chatplot method for yapplotlib.
 """
 
 import matplotlib
@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from ._styles import resolve_style
 from ._artists import ChatThread
 
-# Keys that can be passed from chat_thread() kwargs to ax.chat_thread()
+# Keys that can be passed from chatplot() kwargs to ax.chatplot()
 _LAYOUT_KEYS = (
     'bubble_width', 'sender_align', 'show_names', 'show_timestamps',
     'show_avatars', 'avatar_size', 'line_spacing', 'bubble_spacing',
@@ -24,7 +24,7 @@ def _rc(key, fallback):
         return fallback
 
 
-def _ax_chat_thread(
+def _ax_chatplot(
     self,
     messages,
     *,
@@ -44,7 +44,7 @@ def _ax_chat_thread(
     Render a chat thread on this Axes.
 
     This method is injected onto ``matplotlib.axes.Axes`` when yapplotlib
-    is imported, so you can call it as ``ax.chat_thread(messages, ...)``.
+    is imported, so you can call it as ``ax.chatplot(messages, ...)``.
 
     Parameters
     ----------
@@ -133,7 +133,7 @@ def _ax_chat_thread(
     return ChatThread(messages, resolved_style, self, layout_params)
 
 
-def chat_thread(
+def chatplot(
     messages,
     *,
     figsize=None,
@@ -150,7 +150,7 @@ def chat_thread(
     Parameters
     ----------
     messages : list[dict]
-        Conversation messages (see ``ax.chat_thread`` for format).
+        Conversation messages (see ``ax.chatplot`` for format).
 
     figsize : (float, float), optional
         Figure ``(width, height)`` in inches. If *None*, width defaults to
@@ -163,7 +163,7 @@ def chat_thread(
         Theme name or style dict. Default: ``'default'``.
 
     **kwargs
-        All keyword arguments accepted by ``ax.chat_thread()``
+        All keyword arguments accepted by ``ax.chatplot()``
         (``bubble_width``, ``show_names``, ``style``, etc.).
 
     Returns
@@ -178,7 +178,7 @@ def chat_thread(
     # Maximise axes area; chat display needs no tick labels or titles
     fig.subplots_adjust(left=0.02, right=0.98, top=0.98, bottom=0.02)
 
-    thread = ax.chat_thread(messages, style=style, **kwargs)
+    thread = ax.chatplot(messages, style=style, **kwargs)
 
     if figsize is None:
         _autosize_figure(fig, thread)

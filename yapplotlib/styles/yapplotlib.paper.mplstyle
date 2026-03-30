@@ -1,9 +1,10 @@
-# chatplotlib 'paper' style
-# Apply with: plt.style.use('chatplotlib.paper')
+# yapplotlib 'paper' style
+# Apply with: plt.style.use('yapplotlib.paper')
 # Use for publication figures that need to survive greyscale printing.
 
-figure.facecolor : white
-axes.facecolor   : white
-savefig.facecolor: white
-font.family      : serif
-font.size        : 9
+figure.facecolor  : white
+axes.facecolor    : white
+savefig.facecolor : white
+font.family       : serif
+font.size         : 9
+yapplotlib.style  : paper

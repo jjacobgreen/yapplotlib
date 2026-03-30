@@ -12,11 +12,11 @@ def test_import():
 
 
 def test_axes_method_injected():
-    """Importing yapplotlib patches Axes.chat_thread."""
+    """Importing yapplotlib patches Axes.chatplot."""
     import yapplotlib  # noqa: F401 — import for side-effect
     from matplotlib.axes import Axes
-    assert hasattr(Axes, 'chat_thread')
-    assert callable(Axes.chat_thread)
+    assert hasattr(Axes, 'chatplot')
+    assert callable(Axes.chatplot)
 
 
 def test_themes_exposed():
@@ -67,6 +67,20 @@ def test_mplstyle_dark_available():
     import yapplotlib  # noqa: F401
     with plt.style.context('yapplotlib.dark'):
         pass
+
+
+def test_mplstyle_paper_sets_yapplotlib_style():
+    import matplotlib
+    import yapplotlib  # noqa: F401
+    with plt.style.context('yapplotlib.paper'):
+        assert matplotlib.rcParams['yapplotlib.style'] == 'paper'
+
+
+def test_mplstyle_dark_sets_yapplotlib_style():
+    import matplotlib
+    import yapplotlib  # noqa: F401
+    with plt.style.context('yapplotlib.dark'):
+        assert matplotlib.rcParams['yapplotlib.style'] == 'dark'
 
 
 import pytest

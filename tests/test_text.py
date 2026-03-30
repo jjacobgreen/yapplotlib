@@ -1,13 +1,9 @@
 """
-Tests for text wrapping and segment splitting utilities.
+Tests for text wrapping utilities.
 """
 
 import pytest
-from yapplotlib._text import (
-    wrap_text,
-    estimate_chars_per_line,
-    split_content_segments,
-)
+from yapplotlib._text import wrap_text, estimate_chars_per_line
 
 
 class TestWrapText:
@@ -66,46 +62,3 @@ class TestEstimateCharsPerLine:
         narrow = estimate_chars_per_line(100, 10)
         wide   = estimate_chars_per_line(400, 10)
         assert wide > narrow
-
-
-class TestSplitContentSegments:
-    def test_plain_text_no_code(self):
-        result = split_content_segments('Hello world')
-        assert result == [('text', 'Hello world')]
-
-    def test_single_code_block(self):
-        content = 'Before\n```python\nx = 1\n```\nAfter'
-        segs = split_content_segments(content)
-        kinds = [k for k, _ in segs]
-        assert 'code' in kinds
-        assert 'text' in kinds
-
-    def test_code_block_inner_text(self):
-        content = '```\nprint("hello")\n```'
-        segs = split_content_segments(content)
-        assert len(segs) == 1
-        assert segs[0][0] == 'code'
-        assert 'print("hello")' in segs[0][1]
-
-    def test_language_tag_stripped(self):
-        content = '```python\nx = 1\n```'
-        segs = split_content_segments(content)
-        assert segs[0][0] == 'code'
-        assert 'python' not in segs[0][1]
-
-    def test_multiple_code_blocks(self):
-        content = 'A\n```\ncode1\n```\nB\n```\ncode2\n```\nC'
-        segs = split_content_segments(content)
-        codes = [t for k, t in segs if k == 'code']
-        assert len(codes) == 2
-        assert 'code1' in codes[0]
-        assert 'code2' in codes[1]
-
-    def test_empty_string(self):
-        result = split_content_segments('')
-        assert result == [('text', '')]
-
-    def test_returns_list_of_tuples(self):
-        result = split_content_segments('plain')
-        assert isinstance(result, list)
-        assert all(isinstance(t, tuple) and len(t) == 2 for t in result)

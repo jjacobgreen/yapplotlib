@@ -1,11 +1,12 @@
-# chatplotlib 'dark' style
-# Apply with: plt.style.use('chatplotlib.dark')
+# yapplotlib 'dark' style
+# Apply with: plt.style.use('yapplotlib.dark')
 # Note: hex colours (#RRGGBB) are not valid in mplstyle files because # is the
 # comment character — use float RGB tuples instead.
 
-figure.facecolor : (0.043, 0.078, 0.102)
-axes.facecolor   : (0.043, 0.078, 0.102)
-savefig.facecolor: (0.043, 0.078, 0.102)
-text.color       : (0.910, 0.910, 0.910)
-font.family      : sans-serif
-font.size        : 10
+figure.facecolor  : (0.043, 0.078, 0.102)
+axes.facecolor    : (0.043, 0.078, 0.102)
+savefig.facecolor : (0.043, 0.078, 0.102)
+text.color        : (0.910, 0.910, 0.910)
+font.family       : sans-serif
+font.size         : 10
+yapplotlib.style  : dark

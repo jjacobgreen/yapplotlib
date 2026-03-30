@@ -6,7 +6,7 @@ THEMES = {
     'default': {
         # Role colours
         'user_facecolor': '#DCF8C6',
-        'user_edgecolor': 'none',
+        'user_edgecolor': '#A8D9A0',
         'user_textcolor': '#111111',
         'assistant_facecolor': '#FFFFFF',
         'assistant_edgecolor': '#E0E0E0',
@@ -151,6 +151,33 @@ DEFAULT_ALIGN = {
 }
 
 
+def _build_auto_theme():
+    """
+    Build the 'default' theme by inheriting background and text colors from
+    matplotlib's currently active style (rcParams).
+
+    The bubble color palette is chosen based on the luminance of the active
+    axes background: dark backgrounds get the 'dark' bubble palette, light
+    backgrounds keep the standard 'default' palette.
+    """
+    import matplotlib
+    from matplotlib.colors import to_rgb
+
+    fig_fc = matplotlib.rcParams.get('figure.facecolor', '#E5DDD5')
+    axes_fc = matplotlib.rcParams.get('axes.facecolor', '#E5DDD5')
+    text_color = matplotlib.rcParams.get('text.color', '#111111')
+
+    r, g, b = to_rgb(axes_fc)
+    luminance = 0.299 * r + 0.587 * g + 0.114 * b
+
+    base = dict(THEMES['dark' if luminance <= 0.5 else 'default'])
+    base['figure_facecolor'] = fig_fc
+    base['axes_facecolor'] = axes_fc
+    for role in ('user', 'assistant', 'system', 'other'):
+        base[f'{role}_textcolor'] = text_color
+    return base
+
+
 def resolve_style(style):
     """
     Resolve a style name or partial dict to a complete style dict.
@@ -161,13 +188,17 @@ def resolve_style(style):
         A theme name ('default', 'paper', 'dark', 'minimal'), a partial
         style dict (merged on top of 'default'), or None (uses 'default').
 
+        The ``'default'`` theme is adaptive: it inherits background and text
+        colors from matplotlib's currently active style (rcParams), and
+        selects light or dark bubble colors based on background luminance.
+
     Returns
     -------
     dict
         A fully resolved style dict containing all known keys.
     """
-    if style is None:
-        return dict(THEMES['default'])
+    if style is None or style == 'default':
+        return _build_auto_theme()
     if isinstance(style, str):
         if style not in THEMES:
             raise ValueError(
@@ -176,7 +207,10 @@ def resolve_style(style):
         return dict(THEMES[style])
     if isinstance(style, dict):
         base_name = style.get('_base', 'default')
-        base = dict(THEMES.get(base_name, THEMES['default']))
+        if base_name == 'default':
+            base = _build_auto_theme()
+        else:
+            base = dict(THEMES.get(base_name, THEMES['default']))
         base.update({k: v for k, v in style.items() if k != '_base'})
         return base
     raise TypeError(
