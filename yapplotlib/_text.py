@@ -6,6 +6,7 @@ via the matplotlib renderer's font metrics.
 """
 
 import textwrap
+
 from matplotlib.font_manager import FontProperties
 
 
@@ -17,12 +18,12 @@ def wrap_text(content, max_chars):
     (never empty — a blank content string returns ['']).
     """
     if not content:
-        return ['']
+        return [""]
     max_chars = max(1, int(max_chars))
     lines = []
-    for para in content.split('\n'):
-        if para.strip() == '':
-            lines.append('')
+    for para in content.split("\n"):
+        if para.strip() == "":
+            lines.append("")
         else:
             wrapped = textwrap.wrap(
                 para,
@@ -31,7 +32,7 @@ def wrap_text(content, max_chars):
                 break_on_hyphens=True,
                 expand_tabs=True,
             )
-            lines.extend(wrapped or [''])
+            lines.extend(wrapped or [""])
     return lines
 
 
@@ -63,7 +64,7 @@ def wrap_text_accurate(content, max_width_pts, font_size, font_family, renderer,
     list[str]
     """
     if not content:
-        return ['']
+        return [""]
 
     prop = FontProperties(family=font_family, size=font_size)
     pts_per_px = 72.0 / dpi
@@ -73,33 +74,33 @@ def wrap_text_accurate(content, max_width_pts, font_size, font_family, renderer,
         return w_px * pts_per_px
 
     lines = []
-    for para in content.split('\n'):
+    for para in content.split("\n"):
         words = para.split()
         if not words:
-            lines.append('')
+            lines.append("")
             continue
 
         current = []
         for word in words:
-            candidate = ' '.join(current + [word])
+            candidate = " ".join(current + [word])
             if not current or measure_pts(candidate) <= max_width_pts:
                 current.append(word)
             else:
-                lines.append(' '.join(current))
+                lines.append(" ".join(current))
                 current = [word]
         if current:
-            lines.append(' '.join(current))
+            lines.append(" ".join(current))
 
-    return lines or ['']
+    return lines or [""]
 
 
-def estimate_chars_per_line(width_pts, font_size, font_family='sans-serif'):
+def estimate_chars_per_line(width_pts, font_size, font_family="sans-serif"):
     """
     Fallback character-count estimate used when no renderer is available.
     """
-    if 'mono' in font_family.lower():
+    if "mono" in font_family.lower():
         char_factor = 0.60
-    elif 'serif' in font_family.lower():
+    elif "serif" in font_family.lower():
         char_factor = 0.50
     else:
         char_factor = 0.55

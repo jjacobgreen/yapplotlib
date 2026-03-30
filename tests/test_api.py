@@ -2,24 +2,26 @@
 Tests for the public API: chatplot() and ax.chatplot().
 """
 
-import pytest
 import matplotlib
 import matplotlib.pyplot as plt
+import pytest
+
 import yapplotlib
 from yapplotlib._artists import ChatThread
 
-
 # ── Fixtures ─────────────────────────────────────────────────────────────
+
 
 @pytest.fixture
 def msgs():
     return [
-        {'role': 'user',      'content': 'Hello!'},
-        {'role': 'assistant', 'content': 'Hi there!'},
+        {"role": "user", "content": "Hello!"},
+        {"role": "assistant", "content": "Hi there!"},
     ]
 
 
 # ── chatplot() ─────────────────────────────────────────────────────────
+
 
 class TestChatThread:
     def test_returns_fig_and_ax(self, msgs):
@@ -28,13 +30,13 @@ class TestChatThread:
         assert isinstance(ax, matplotlib.axes.Axes)
 
     def test_all_styles(self, msgs):
-        for style in ('default', 'paper', 'dark', 'minimal'):
+        for style in ("default", "paper", "dark", "minimal"):
             fig, ax = yapplotlib.chatplot(msgs, style=style)
             assert fig is not None
 
     def test_unknown_style_raises(self, msgs):
         with pytest.raises(ValueError, match="Unknown style"):
-            yapplotlib.chatplot(msgs, style='nope')
+            yapplotlib.chatplot(msgs, style="nope")
 
     def test_custom_figsize(self, msgs):
         fig, ax = yapplotlib.chatplot(msgs, figsize=(8, 6))
@@ -63,13 +65,12 @@ class TestChatThread:
         assert fig is not None
 
     def test_dict_style_override(self, msgs):
-        fig, ax = yapplotlib.chatplot(
-            msgs, style={'user_facecolor': '#FF0000'}
-        )
+        fig, ax = yapplotlib.chatplot(msgs, style={"user_facecolor": "#FF0000"})
         assert fig is not None
 
 
 # ── ax.chatplot() ─────────────────────────────────────────────────────
+
 
 class TestAxChatThread:
     def test_returns_chatplot_object(self, msgs):
@@ -79,7 +80,7 @@ class TestAxChatThread:
 
     def test_embedded_in_subplot(self, msgs):
         fig, axes = plt.subplots(1, 2, figsize=(10, 5))
-        thread = axes[0].chatplot(msgs, style='paper')
+        thread = axes[0].chatplot(msgs, style="paper")
         axes[1].plot([1, 2, 3], [1, 4, 2])
         assert isinstance(thread, ChatThread)
 
@@ -90,8 +91,8 @@ class TestAxChatThread:
 
     def test_show_timestamps(self):
         msgs = [
-            {'role': 'user',      'content': 'Hey',    'timestamp': '10:00'},
-            {'role': 'assistant', 'content': 'Hello!', 'timestamp': '10:01'},
+            {"role": "user", "content": "Hey", "timestamp": "10:00"},
+            {"role": "assistant", "content": "Hello!", "timestamp": "10:01"},
         ]
         fig, ax = plt.subplots()
         thread = ax.chatplot(msgs, show_timestamps=True)
@@ -103,7 +104,7 @@ class TestAxChatThread:
         assert isinstance(thread, ChatThread)
 
     def test_per_message_style(self, msgs):
-        msgs[0] = {**msgs[0], 'style': {'user_facecolor': '#FFD700'}}
+        msgs[0] = {**msgs[0], "style": {"user_facecolor": "#FFD700"}}
         fig, ax = plt.subplots()
         thread = ax.chatplot(msgs)
         assert isinstance(thread, ChatThread)
@@ -112,7 +113,7 @@ class TestAxChatThread:
         fig, ax = plt.subplots()
         thread = ax.chatplot(
             msgs,
-            sender_align={'user': 'left', 'assistant': 'right'},
+            sender_align={"user": "left", "assistant": "right"},
         )
         assert isinstance(thread, ChatThread)
 
@@ -123,6 +124,7 @@ class TestAxChatThread:
 
 
 # ── ChatThread introspection ──────────────────────────────────────────────
+
 
 class TestChatThreadIntrospection:
     def test_get_children_returns_list(self, msgs):
@@ -156,14 +158,15 @@ class TestChatThreadIntrospection:
 
 # ── rcParams integration ──────────────────────────────────────────────────
 
+
 class TestRcParams:
     def test_rcparam_style_respected(self, msgs):
-        original = matplotlib.rcParams.get('yapplotlib.style', 'default')
+        original = matplotlib.rcParams.get("yapplotlib.style", "default")
         try:
-            matplotlib.rcParams['yapplotlib.style'] = 'paper'
+            matplotlib.rcParams["yapplotlib.style"] = "paper"
             fig, ax = plt.subplots()
             # Should use 'paper' style from rcParams (no explicit style arg)
             thread = ax.chatplot(msgs)
             assert isinstance(thread, ChatThread)
         finally:
-            matplotlib.rcParams['yapplotlib.style'] = original
+            matplotlib.rcParams["yapplotlib.style"] = original

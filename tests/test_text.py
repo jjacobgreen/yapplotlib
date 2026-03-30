@@ -2,43 +2,42 @@
 Tests for text wrapping utilities.
 """
 
-import pytest
-from yapplotlib._text import wrap_text, estimate_chars_per_line
+from yapplotlib._text import estimate_chars_per_line, wrap_text
 
 
 class TestWrapText:
     def test_empty_string(self):
-        assert wrap_text('', 40) == ['']
+        assert wrap_text("", 40) == [""]
 
     def test_short_string_no_wrap(self):
-        result = wrap_text('Hello world', 40)
-        assert result == ['Hello world']
+        result = wrap_text("Hello world", 40)
+        assert result == ["Hello world"]
 
     def test_long_string_wraps(self):
-        long = 'word ' * 20
+        long = "word " * 20
         result = wrap_text(long.strip(), 20)
         assert len(result) > 1
         for line in result:
             assert len(line) <= 20
 
     def test_hard_newlines_preserved(self):
-        result = wrap_text('Line one\nLine two', 80)
-        assert 'Line one' in result
-        assert 'Line two' in result
+        result = wrap_text("Line one\nLine two", 80)
+        assert "Line one" in result
+        assert "Line two" in result
 
     def test_blank_lines_preserved(self):
-        result = wrap_text('Para one\n\nPara two', 80)
-        assert '' in result
+        result = wrap_text("Para one\n\nPara two", 80)
+        assert "" in result
 
     def test_max_chars_one(self):
         # Should not crash with very small max_chars
-        result = wrap_text('hello', 1)
-        assert all(isinstance(l, str) for l in result)
+        result = wrap_text("hello", 1)
+        assert all(isinstance(line, str) for line in result)
 
     def test_returns_list_of_strings(self):
-        result = wrap_text('Some text here', 30)
+        result = wrap_text("Some text here", 30)
         assert isinstance(result, list)
-        assert all(isinstance(l, str) for l in result)
+        assert all(isinstance(line, str) for line in result)
 
 
 class TestEstimateCharsPerLine:
@@ -48,8 +47,8 @@ class TestEstimateCharsPerLine:
         assert result > 0
 
     def test_monospace_narrower(self):
-        mono  = estimate_chars_per_line(200, 10, 'monospace')
-        sans  = estimate_chars_per_line(200, 10, 'sans-serif')
+        mono = estimate_chars_per_line(200, 10, "monospace")
+        sans = estimate_chars_per_line(200, 10, "sans-serif")
         # monospace chars are wider → fewer fit
         assert mono <= sans
 
@@ -60,5 +59,5 @@ class TestEstimateCharsPerLine:
 
     def test_wider_means_more_chars(self):
         narrow = estimate_chars_per_line(100, 10)
-        wide   = estimate_chars_per_line(400, 10)
+        wide = estimate_chars_per_line(400, 10)
         assert wide > narrow

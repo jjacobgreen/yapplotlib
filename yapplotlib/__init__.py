@@ -46,15 +46,15 @@ try:
     from matplotlib import rcsetup as _rcsetup
 
     _RC_DEFAULTS = {
-        'yapplotlib.style':           ('default', _rcsetup.validate_string),
-        'yapplotlib.bubble_width':    (0.6,       _rcsetup.validate_float),
-        'yapplotlib.show_names':      (True,      _rcsetup.validate_bool),
-        'yapplotlib.show_timestamps': (False,     _rcsetup.validate_bool),
-        'yapplotlib.show_avatars':    (False,     _rcsetup.validate_bool),
-        'yapplotlib.font_size':       (10.0,      _rcsetup.validate_float),
-        'yapplotlib.bubble_spacing':  (0.6,       _rcsetup.validate_float),
-        'yapplotlib.line_spacing':    (1.4,       _rcsetup.validate_float),
-        'yapplotlib.pad':             (0.05,      _rcsetup.validate_float),
+        "yapplotlib.style": ("default", _rcsetup.validate_string),
+        "yapplotlib.bubble_width": (0.6, _rcsetup.validate_float),
+        "yapplotlib.show_names": (True, _rcsetup.validate_bool),
+        "yapplotlib.show_timestamps": (False, _rcsetup.validate_bool),
+        "yapplotlib.show_avatars": (False, _rcsetup.validate_bool),
+        "yapplotlib.font_size": (10.0, _rcsetup.validate_float),
+        "yapplotlib.bubble_spacing": (0.6, _rcsetup.validate_float),
+        "yapplotlib.line_spacing": (1.4, _rcsetup.validate_float),
+        "yapplotlib.pad": (0.05, _rcsetup.validate_float),
     }
 
     for _key, (_default, _validator) in _RC_DEFAULTS.items():
@@ -73,15 +73,15 @@ except Exception:
 # Enables:  plt.style.use('yapplotlib.paper')
 # Must come after rcParams registration so yapplotlib.* keys are valid when
 # the style files are parsed by reload_library().
-_styles_dir = Path(__file__).parent / 'styles'
+_styles_dir = Path(__file__).parent / "styles"
 if _styles_dir not in matplotlib.style.core.USER_LIBRARY_PATHS:
-    matplotlib.style.core.USER_LIBRARY_PATHS.append(_styles_dir)
+    matplotlib.style.core.USER_LIBRARY_PATHS.append(_styles_dir)  # type: ignore[arg-type]
 matplotlib.style.reload_library()
 
 # ── Inject Axes.chatplot ──────────────────────────────────────────────────
 # This is the standard matplotlib extension pattern used by mplcursors,
 # matplotlib-scalebar, and others.
-Axes.chatplot = _ax_chatplot
+Axes.chatplot = _ax_chatplot  # type: ignore[attr-defined]
 
 # ── Public API ────────────────────────────────────────────────────────────
 #: Read-only copies of the built-in theme dicts, available for introspection
@@ -91,9 +91,9 @@ Axes.chatplot = _ax_chatplot
 themes = {name: dict(s) for name, s in THEMES.items()}
 
 __all__ = [
-    'chatplot',
-    'themes',
-    'resolve_style',
+    "chatplot",
+    "themes",
+    "resolve_style",
 ]
 
-__version__ = '0.1.0'
+__version__ = "0.1.0"

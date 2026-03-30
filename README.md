@@ -1,13 +1,16 @@
 # yapplotlib
 
-A matplotlib plugin for rendering chat interfaces.
+A matplotlib plugin for rendering chat transcripts.
 
 ## Installation
 
+With `uv` (recommended):
+```bash
+uv add yapplotlib
+```
+Alternatively, via `pip`:
 ```bash
 pip install yapplotlib
-# or with uv:
-uv add yapplotlib
 ```
 
 ## Quick start
@@ -21,18 +24,18 @@ messages = [
     {'role': 'assistant', 'content': 'The capital of France is Paris.'},
 ]
 
-fig, ax = yapplotlib.chat_thread(messages, style='paper')
-fig.savefig('chat.pdf', bbox_inches='tight')
+fig, ax = yapplotlib.chatplot(messages, style='default')
+fig.savefig('chat.png')
 ```
 
 ## Embedding in an existing figure
 
 ```python
 import matplotlib.pyplot as plt
-import yapplotlib  # patches Axes.chat_thread on import
+import yapplotlib
 
 fig, axes = plt.subplots(1, 2, figsize=(12, 6))
-axes[0].chat_thread(messages, style='paper')
+axes[0].chatplot(messages, style='paper')
 axes[1].plot([1, 2, 3], [4, 5, 6])
 plt.tight_layout()
 ```
@@ -56,12 +59,12 @@ Each message is a plain dict with at least `role` and `content`:
 | Theme | Description |
 |-------|-------------|
 | `'default'` | WhatsApp-style green/white, sans-serif |
-| `'paper'`   | Greyscale, serif — survives black-and-white printing |
+| `'paper'`   | Greyscale, serif - survives black-and-white printing |
 | `'dark'`    | Dark background for slides and web |
 | `'minimal'` | Outline only, no fill |
 
 ```python
-fig, ax = yapplotlib.chat_thread(messages, style='paper')
+fig, ax = yapplotlib.chatplot(messages, style='paper')
 ```
 
 ## mplstyle integration
@@ -69,7 +72,7 @@ fig, ax = yapplotlib.chat_thread(messages, style='paper')
 ```python
 import matplotlib.pyplot as plt
 with plt.style.context('yapplotlib.paper'):
-    fig, ax = yapplotlib.chat_thread(messages, style='paper')
+    fig, ax = yapplotlib.chatplot(messages)
 ```
 
 Available styles: `yapplotlib.paper`, `yapplotlib.dark`.
@@ -85,7 +88,7 @@ matplotlib.rcParams['yapplotlib.bubble_width'] = 0.65
 matplotlib.rcParams['yapplotlib.show_names']   = False
 ```
 
-Available keys: `yapplotlib.style`, `yapplotlib.bubble_width`,
+Available settings: `yapplotlib.style`, `yapplotlib.bubble_width`,
 `yapplotlib.show_names`, `yapplotlib.show_timestamps`,
 `yapplotlib.show_avatars`, `yapplotlib.font_size`,
 `yapplotlib.bubble_spacing`, `yapplotlib.line_spacing`, `yapplotlib.pad`.
@@ -110,7 +113,7 @@ Available keys: `yapplotlib.style`, `yapplotlib.bubble_width`,
 ```python
 # Partial override — merges with a named base theme
 my_style = {**yapplotlib.themes['paper'], 'font_size': 11, 'user_facecolor': '#D0E8FF'}
-fig, ax = yapplotlib.chat_thread(messages, style=my_style)
+fig, ax = yapplotlib.chatplot(messages, style=my_style)
 
 # Per-message highlight
 messages[2]['style'] = {'user_facecolor': '#FFD700'}
@@ -118,10 +121,10 @@ messages[2]['style'] = {'user_facecolor': '#FFD700'}
 
 ## ChatThread object
 
-`ax.chat_thread()` returns a `ChatThread` object:
+`ax.chatplot()` returns a `ChatThread` object:
 
 ```python
-thread = ax.chat_thread(messages)
+thread = ax.chatplot(messages)
 
 thread.get_children()  # list of all managed matplotlib artists
 thread.redraw()        # force re-layout (e.g. after changing messages)
@@ -147,5 +150,9 @@ uv run python smoke_test.py  # render all styles to smoke_output/
   messages (`role: 'tool'` or `role: 'tool_result'`), showing the tool name,
   inputs, and output in a monospace code-block style distinct from regular
   assistant prose.
+
+- **Full markdown rendering**
+
+- **Avatar icons** — role-specific icons instead of initials. To the effect of (👤, 🤖).
 
 - **Plotly support**

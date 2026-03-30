@@ -5,21 +5,28 @@ Public API functions and the Axes.chatplot method for yapplotlib.
 import matplotlib
 import matplotlib.pyplot as plt
 
-from ._styles import resolve_style
 from ._artists import ChatThread
+from ._styles import resolve_style
 
 # Keys that can be passed from chatplot() kwargs to ax.chatplot()
 _LAYOUT_KEYS = (
-    'bubble_width', 'sender_align', 'show_names', 'show_timestamps',
-    'show_avatars', 'avatar_size', 'line_spacing', 'bubble_spacing',
-    'pad', 'font_size',
+    "bubble_width",
+    "sender_align",
+    "show_names",
+    "show_timestamps",
+    "show_avatars",
+    "avatar_size",
+    "line_spacing",
+    "bubble_spacing",
+    "pad",
+    "font_size",
 )
 
 
 def _rc(key, fallback):
     """Read a yapplotlib rcParam, falling back to *fallback* if not set."""
     try:
-        return matplotlib.rcParams[f'yapplotlib.{key}']
+        return matplotlib.rcParams[f"yapplotlib.{key}"]
     except KeyError:
         return fallback
 
@@ -105,30 +112,37 @@ def _ax_chatplot(
     """
     # Apply rcParam defaults for any argument left as None
     if style is None:
-        style = _rc('style', 'default')
+        style = _rc("style", "default")
 
     resolved_style = resolve_style(style)
 
     layout_params = {
-        k: v for k, v in {
-            'bubble_width':    bubble_width    if bubble_width    is not None else _rc('bubble_width',    0.6),
-            'sender_align':    sender_align,
-            'show_names':      show_names      if show_names      is not None else _rc('show_names',      True),
-            'show_timestamps': show_timestamps if show_timestamps is not None else _rc('show_timestamps', False),
-            'show_avatars':    show_avatars    if show_avatars    is not None else _rc('show_avatars',    False),
-            'avatar_size':     avatar_size,
-            'line_spacing':    line_spacing    if line_spacing    is not None else _rc('line_spacing',    1.4),
-            'bubble_spacing':  bubble_spacing  if bubble_spacing  is not None else _rc('bubble_spacing',  0.6),
-            'pad':             pad             if pad             is not None else _rc('pad',             0.05),
-            'font_size':       font_size       if font_size       is not None else _rc('font_size',       None),
+        k: v
+        for k, v in {
+            "bubble_width": bubble_width if bubble_width is not None else _rc("bubble_width", 0.6),
+            "sender_align": sender_align,
+            "show_names": show_names if show_names is not None else _rc("show_names", True),
+            "show_timestamps": show_timestamps
+            if show_timestamps is not None
+            else _rc("show_timestamps", False),
+            "show_avatars": show_avatars
+            if show_avatars is not None
+            else _rc("show_avatars", False),
+            "avatar_size": avatar_size,
+            "line_spacing": line_spacing if line_spacing is not None else _rc("line_spacing", 1.4),
+            "bubble_spacing": bubble_spacing
+            if bubble_spacing is not None
+            else _rc("bubble_spacing", 0.6),
+            "pad": pad if pad is not None else _rc("pad", 0.05),
+            "font_size": font_size if font_size is not None else _rc("font_size", None),
         }.items()
         if v is not None
     }
 
     # Apply figure/axes background colours from style
     fig = self.get_figure()
-    fig.patch.set_facecolor(resolved_style.get('figure_facecolor', 'white'))
-    self.set_facecolor(resolved_style.get('axes_facecolor', 'white'))
+    fig.patch.set_facecolor(resolved_style.get("figure_facecolor", "white"))
+    self.set_facecolor(resolved_style.get("axes_facecolor", "white"))
 
     return ChatThread(messages, resolved_style, self, layout_params)
 
@@ -199,7 +213,7 @@ def _autosize_figure(fig, thread):
 
     ax = thread._ax
     ymin, ymax = ax.get_ylim()
-    content_pts = abs(ymax - ymin)   # ylim is in pt units
+    content_pts = abs(ymax - ymin)  # ylim is in pt units
 
     # Convert content height from pts to inches, add a small margin
     margin_pts = 14
