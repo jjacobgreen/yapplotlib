@@ -2,9 +2,34 @@
 
 A matplotlib plugin for rendering chat transcripts as matplotlib figures.
 
+Instead of scrolling through *this*...
+
+```json
+[
+  {
+    "role": "user",
+    "content": "Have you heard of yapplotlib?"
+  },
+  {
+    "role": "assistant",
+    "content": "Yes! It's a matplotlib plugin for rendering chat logs as figures."
+  },
+  {
+    "role": "user",
+    "content": "That's quite meta."
+  },
+  {
+    "role": "assistant",
+    "content": "Indeed."
+  }
+]
+```
+
+...see it how your brain is used to.
+
 ![Chat thread rendered in the default style](docs/hero.png)
 
-Designed for embedding LLM conversations quickly and easily in academic papers, slides and notebooks as native matplotlib subplots. 
+Designed for embedding LLM conversations quickly and easily in academic papers, slides and notebooks as native matplotlib subplots.
 
 ## Installation
 
