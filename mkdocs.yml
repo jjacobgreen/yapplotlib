@@ -1,0 +1,32 @@
+site_name: yapplotlib
+site_description: A matplotlib plugin for rendering chat transcripts as figures.
+repo_url: https://github.com/jjacobgreen/yapplotlib
+repo_name: jjacobgreen/yapplotlib
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.top
+    - content.code.copy
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - tables
+  - admonition
+
+nav:
+  - Home: index.md
+  - Usage: usage.md

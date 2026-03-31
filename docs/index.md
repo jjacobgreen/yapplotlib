@@ -1,35 +1,23 @@
 # yapplotlib
 
-A matplotlib plugin for rendering chat transcripts as matplotlib figures.
+A matplotlib plugin for rendering chat transcripts as publication-quality figures.
 
 Instead of scrolling through *this*...
 
 ```json
 [
-  {
-    "role": "user",
-    "content": "Have you heard of yapplotlib?"
-  },
-  {
-    "role": "assistant",
-    "content": "Yes! It's a matplotlib plugin for rendering chat logs as figures."
-  },
-  {
-    "role": "user",
-    "content": "That's quite meta."
-  },
-  {
-    "role": "assistant",
-    "content": "Indeed."
-  }
+  { "role": "user",      "content": "Have you heard of yapplotlib?" },
+  { "role": "assistant", "content": "Yes! It's a matplotlib plugin for rendering chat logs as figures." },
+  { "role": "user",      "content": "That's quite meta." },
+  { "role": "assistant", "content": "Indeed." }
 ]
 ```
 
 ...see it how your brain is used to.
 
-![Chat thread rendered in the default style](docs/assets/hero.png)
+![Chat thread rendered in the default style](assets/hero.png)
 
-Designed for embedding LLM conversations in academic papers, slides, and notebooks as native matplotlib subplots.
+Designed for embedding LLM conversations in academic papers, slides, and notebooks as native matplotlib subplots — alongside your other figures.
 
 ## Installation
 
@@ -56,7 +44,7 @@ fig.savefig('chat.pdf', bbox_inches='tight')
 
 ## Themes
 
-![Four themes: default, paper, dark, minimal](docs/assets/themes.png)
+![Four themes: default, paper, dark, minimal](assets/themes.png)
 
 | Theme | Description |
 |-------|-------------|
@@ -65,6 +53,4 @@ fig.savefig('chat.pdf', bbox_inches='tight')
 | `'dark'` | Dark background for slides and web |
 | `'minimal'` | Outline only, no fill |
 
----
-
-For embedding, options, and customisation see the **[full documentation](https://jjacobgreen.github.io/yapplotlib)**.
+See the [Usage](usage.md) guide for embedding, options, and customisation.
