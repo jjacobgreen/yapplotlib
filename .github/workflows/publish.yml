@@ -3,10 +3,22 @@ name: Publish to PyPI
 on:
   push:
     tags:
-      - "v[0-9]*"
+      - "v[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57
+
+      - name: Run tests
+        run: uv run pytest
+
   build-and-publish:
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -17,7 +29,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: astral-sh/setup-uv@v8
+      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57
 
       - name: Build
         run: uv build

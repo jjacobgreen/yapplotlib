@@ -5,7 +5,7 @@ build-backend = "uv_build"
 [project]
 name = "yapplotlib"
 version = "0.1.0"
-description = "A matplotlib plugin for rendering chat interfaces — ideal for academic AI papers."
+description = "A lightweight matplotlib plugin for rendering chat transcripts."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
