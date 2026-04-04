@@ -22,6 +22,7 @@ Or embedded in an existing figure::
     plt.tight_layout()
 """
 
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 import matplotlib
@@ -98,4 +99,7 @@ __all__ = [
     "resolve_style",
 ]
 
-__version__ = "0.1.0"
+try:
+    __version__ = version("yapplotlib")
+except PackageNotFoundError:
+    __version__ = "unknown"
