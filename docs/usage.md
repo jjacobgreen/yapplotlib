@@ -33,6 +33,83 @@ Each message is a plain dict:
 
 Supported roles: `'user'`, `'assistant'`, `'system'`. Aliases `'human'`, `'ai'`, `'bot'`, and `'model'` are also accepted.
 
+## OpenAI-compatible tool calls and reasoning summaries
+
+`chatplot()` also renders common OpenAI-compatible response shapes:
+
+- Chat Completions response objects with `choices`
+- Chat Completions assistant messages with `tool_calls`
+- Chat Completions `tool` role result messages
+- Responses API objects with an `output` list
+- Responses API `reasoning` items when they include visible `summary` text
+- Responses API `function_call` and `function_call_output` items
+- Explicit `reasoning`, `tool_call`, and `tool_result` message roles
+
+```python
+messages = [
+    {'role': 'user', 'content': 'What is the weather in Paris?'},
+    {
+        'role': 'assistant',
+        'content': None,
+        'tool_calls': [
+            {
+                'id': 'call_123',
+                'type': 'function',
+                'function': {
+                    'name': 'get_weather',
+                    'arguments': '{"location": "Paris"}',
+                },
+            }
+        ],
+    },
+    {
+        'role': 'tool',
+        'tool_call_id': 'call_123',
+        'content': '{"temperature": 18}',
+    },
+    {
+        'role': 'assistant',
+        'content': 'It is 18 C in Paris.',
+    },
+]
+
+fig, ax = yapplotlib.chatplot(messages, style='paper')
+```
+
+Responses API objects can be passed directly:
+
+```python
+response = {
+    'output': [
+        {
+            'type': 'reasoning',
+            'summary': [{'type': 'summary_text', 'text': 'Need current weather.'}],
+        },
+        {
+            'type': 'function_call',
+            'call_id': 'call_123',
+            'name': 'get_weather',
+            'arguments': '{"location": "Paris"}',
+        },
+        {
+            'type': 'function_call_output',
+            'call_id': 'call_123',
+            'output': '{"temperature": 18}',
+        },
+        {
+            'type': 'message',
+            'role': 'assistant',
+            'content': [{'type': 'output_text', 'text': 'It is 18 C in Paris.'}],
+        },
+    ],
+}
+
+fig, ax = yapplotlib.chatplot(response, style='paper')
+```
+
+Use `normalize_messages()` if you want to inspect the expanded yapplotlib
+messages before plotting.
+
 ## Options
 
 | Parameter | Default | Description |
