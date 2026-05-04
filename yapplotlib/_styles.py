@@ -14,6 +14,15 @@ THEMES = {
         "system_facecolor": "#F0F0F0",
         "system_edgecolor": "#CCCCCC",
         "system_textcolor": "#666666",
+        "reasoning_facecolor": "#FFF7D6",
+        "reasoning_edgecolor": "#E6C75E",
+        "reasoning_textcolor": "#5A4A00",
+        "tool_call_facecolor": "#E8F1FF",
+        "tool_call_edgecolor": "#9DBCE8",
+        "tool_call_textcolor": "#153A66",
+        "tool_result_facecolor": "#F2EDFF",
+        "tool_result_edgecolor": "#B6A5E6",
+        "tool_result_textcolor": "#39236A",
         "other_facecolor": "#E8E8E8",
         "other_edgecolor": "#CCCCCC",
         "other_textcolor": "#111111",
@@ -48,6 +57,15 @@ THEMES = {
         "system_facecolor": "#F0F0F0",
         "system_edgecolor": "#AAAAAA",
         "system_textcolor": "#444444",
+        "reasoning_facecolor": "#F8F8F8",
+        "reasoning_edgecolor": "#999999",
+        "reasoning_textcolor": "#333333",
+        "tool_call_facecolor": "#EEEEEE",
+        "tool_call_edgecolor": "#777777",
+        "tool_call_textcolor": "#000000",
+        "tool_result_facecolor": "#F7F7F7",
+        "tool_result_edgecolor": "#999999",
+        "tool_result_textcolor": "#222222",
         "other_facecolor": "#EBEBEB",
         "other_edgecolor": "#AAAAAA",
         "other_textcolor": "#000000",
@@ -76,6 +94,15 @@ THEMES = {
         "system_facecolor": "#1B2428",
         "system_edgecolor": "#2A3942",
         "system_textcolor": "#8696A0",
+        "reasoning_facecolor": "#2C2615",
+        "reasoning_edgecolor": "#6B5B28",
+        "reasoning_textcolor": "#F0D98A",
+        "tool_call_facecolor": "#162536",
+        "tool_call_edgecolor": "#2F5E91",
+        "tool_call_textcolor": "#D7E8FF",
+        "tool_result_facecolor": "#251C34",
+        "tool_result_edgecolor": "#5B4483",
+        "tool_result_textcolor": "#E5D8FF",
         "other_facecolor": "#1F2C34",
         "other_edgecolor": "#2A3942",
         "other_textcolor": "#E8E8E8",
@@ -104,6 +131,15 @@ THEMES = {
         "system_facecolor": "none",
         "system_edgecolor": "#AAAAAA",
         "system_textcolor": "#666666",
+        "reasoning_facecolor": "none",
+        "reasoning_edgecolor": "#999999",
+        "reasoning_textcolor": "#333333",
+        "tool_call_facecolor": "none",
+        "tool_call_edgecolor": "#777777",
+        "tool_call_textcolor": "#000000",
+        "tool_result_facecolor": "none",
+        "tool_result_edgecolor": "#999999",
+        "tool_result_textcolor": "#222222",
         "other_facecolor": "none",
         "other_edgecolor": "#666666",
         "other_textcolor": "#000000",
@@ -156,6 +192,9 @@ DEFAULT_ALIGN = {
     "ai": "left",
     "bot": "left",
     "model": "left",
+    "reasoning": "left",
+    "tool_call": "left",
+    "tool_result": "left",
     "system": "center",
 }
 
@@ -182,7 +221,7 @@ def _build_auto_theme():
     base = dict(THEMES["dark" if luminance <= 0.5 else "default"])
     base["figure_facecolor"] = fig_fc
     base["axes_facecolor"] = axes_fc
-    for role in ("user", "assistant", "system", "other"):
+    for role in ("user", "assistant", "system", "reasoning", "tool_call", "tool_result", "other"):
         base[f"{role}_textcolor"] = text_color
     return base
 
@@ -238,7 +277,7 @@ def resolve_role_style(role, style_dict):
     dict with keys 'facecolor', 'edgecolor', 'textcolor'
     """
     canon = _ROLE_ALIASES.get(role, role)
-    if canon in ("user", "assistant", "system"):
+    if canon in ("user", "assistant", "system", "reasoning", "tool_call", "tool_result"):
         return {
             "facecolor": style_dict.get(f"{canon}_facecolor", style_dict["other_facecolor"]),
             "edgecolor": style_dict.get(f"{canon}_edgecolor", style_dict["other_edgecolor"]),

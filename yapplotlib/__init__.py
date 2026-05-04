@@ -31,6 +31,7 @@ from matplotlib.axes import Axes
 
 from ._api import _ax_chatplot, chatplot
 from ._artists import ChatPlot
+from ._messages import normalize_messages
 from ._styles import THEMES, resolve_style
 
 # ── Register custom rcParams ──────────────────────────────────────────────
@@ -95,6 +96,7 @@ themes = {name: dict(s) for name, s in THEMES.items()}
 __all__ = [
     "ChatPlot",
     "chatplot",
+    "normalize_messages",
     "themes",
     "resolve_style",
 ]

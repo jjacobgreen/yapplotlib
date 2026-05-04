@@ -37,6 +37,13 @@ def test_resolve_style_exported():
     assert "user_facecolor" in result
 
 
+def test_normalize_messages_exported():
+    import yapplotlib
+
+    result = yapplotlib.normalize_messages([{"role": "assistant", "content": "Hello"}])
+    assert result == [{"role": "assistant", "content": "Hello"}]
+
+
 def test_rcparams_registered():
     import yapplotlib  # noqa: F401
 

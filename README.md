@@ -31,6 +31,10 @@ Instead of scrolling through *this*...
 
 Designed for embedding LLM conversations in academic papers, slides, and notebooks as native matplotlib subplots.
 
+It can also render OpenAI-compatible response payloads, including Chat
+Completions `tool_calls` / `tool` messages and Responses API reasoning
+summaries, `function_call`, and `function_call_output` items.
+
 ## Installation
 
 ```bash

@@ -6,6 +6,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 from ._artists import ChatPlot
+from ._messages import normalize_messages
 from ._styles import resolve_style
 
 # Keys that can be passed from chatplot() kwargs to ax.chatplot()
@@ -144,7 +145,7 @@ def _ax_chatplot(
     fig.patch.set_facecolor(resolved_style.get("figure_facecolor", "white"))
     self.set_facecolor(resolved_style.get("axes_facecolor", "white"))
 
-    return ChatPlot(messages, resolved_style, self, layout_params)
+    return ChatPlot(normalize_messages(messages), resolved_style, self, layout_params)
 
 
 def chatplot(
