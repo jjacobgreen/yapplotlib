@@ -16,7 +16,7 @@ Instead of scrolling through *this*...
   },
   {
     "role": "user",
-    "content": "That's quite meta."
+    "content": "Woah, that's kinda meta."
   },
   {
     "role": "assistant",
